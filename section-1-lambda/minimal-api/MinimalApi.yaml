@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Description: Lamba function to support Dotnet Core Web API
 
 Parameters:
@@ -37,16 +37,13 @@ Resources:
     Properties:
       FunctionName: MinimalApiFunc
       Runtime: dotnet10
-      Handler: Amazon.Lambda.AspNetCoreServer.Hosting::FunctionHandlerAsync
+      Handler: Amazon.Lambda.AspNetCoreServer::Amazon.Lambda.AspNetCoreServer.Function::FunctionHandlerAsync
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
         S3Bucket: !Ref S3Bucket
         S3Key: !Ref S3Key
       MemorySize: 512
       Timeout: 15
-      Architectures:
-        - x86_64
-      Publish: true
 
   MinimalApiFunctionUrl:
     Type: AWS::Lambda::Url
@@ -54,13 +51,13 @@ Resources:
       TargetFunctionArn: !GetAtt MinimalApiFunction.Arn
       AuthType: NONE
 
-  # MinimalApiFunctionUrlPublicPermission:
-  #   Type: AWS::Lambda::Permission
-  #   Properties:
-  #     FunctionName: !Ref MinimalApiFunction
-  #     Action: lambda:InvokeFunctionUrl
-  #     Principal: '*'
-  #     FunctionUrlAuthType: NONE
+  MinimalApiFunctionUrlPublicPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref MinimalApiFunction
+      Action: lambda:InvokeFunctionUrl
+      Principal: "*"
+      FunctionUrlAuthType: NONE
 
 Outputs:
   FunctionUrl:
