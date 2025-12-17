@@ -37,7 +37,7 @@ Resources:
     Properties:
       FunctionName: MinimalApiFunc
       Runtime: dotnet10
-      Handler: Amazon.Lambda.AspNetCoreServer::Amazon.Lambda.AspNetCoreServer.Function::FunctionHandlerAsync
+      Handler: MinimalAPI #  Assembly name without .dll extension (auto-discover, .NET 6+)
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
         S3Bucket: !Ref S3Bucket
