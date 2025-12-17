@@ -10,10 +10,6 @@ Parameters:
     Type: String
     Description: S3 key (path) to the deployment package zip
     Default: v0.0.1/minimal-api.zip
-  # Handler:
-  #   Type: String
-  #   Default: MinimalApi::MinimalApi.LambdaEntryPoint::FunctionHandlerAsync
-  #   Description: .NET Lambda handler (Assembly::Namespace.Class::Method)
 
 Resources:
   LambdaExecutionRole:
