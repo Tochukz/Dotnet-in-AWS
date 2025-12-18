@@ -59,6 +59,11 @@ $ aws cloudformation describe-stacks --stack-name MinimalApi --query "Stacks[0].
 __Testing__  
 Use the `FunctionUrl` to access the API over a browser. https://ecmprqjwkkzqqkl25qm4q3i6pe0seboc.lambda-url.eu-west-2.on.aws/weatherforecast
 
+__Cleanup__  
+Delete the stack
+```bash
+$ aws cloudformation delete-stack --stack-name MinimalApi
+```
 ### Learn More
 __Amazon.Lambda.AspNetCoreServer.Hosting vs Amazon.Lambda.AspNetCoreServer__  
 For older Dotner Core Web API version such as those still use the  `Startup.cs` file, use the `Amazon.Lambda.AspNetCoreServer` Nuget package instead of `Amazon.Lambda.AspNetCoreServer.Hosting`. See the [Nuget Docs](https://www.nuget.org/packages/Amazon.Lambda.AspNetCoreServer/) to learn more

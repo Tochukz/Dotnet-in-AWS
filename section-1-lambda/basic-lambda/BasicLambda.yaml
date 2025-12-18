@@ -1,0 +1,61 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Lamba function to support Simple Lambda Handler Code Made from Dotnet Class Lib
+
+Parameters:
+  S3Bucket:
+    Type: String
+    Description: S3 bucket containing the deployment package (zip)
+    Default: chucks-workspace-storage
+  S3Key:
+    Type: String
+    Description: S3 key (path) to the deployment package zip
+    Default: v0.0.1/basic-lambda.zip
+
+Resources:
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: BasicLambdaRole
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+  BasicLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: MinimalApiFunc
+      Runtime: dotnet10
+      Handler: BasicLambda::Function::FunctionHandler 
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: !Ref S3Bucket
+        S3Key: !Ref S3Key
+      MemorySize: 512
+      Timeout: 15
+
+  BasicLambdaUrl:
+    Type: AWS::Lambda::Url
+    Properties:
+      TargetFunctionArn: !GetAtt BasicLambda.Arn
+      AuthType: NONE
+
+  BasicLambdaUrlPublicPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref BasicLambda
+      Action: lambda:InvokeFunctionUrl
+      Principal: "*"
+      FunctionUrlAuthType: NONE
+
+Outputs:
+  FunctionUrl:
+    Description: Public Lambda Function URL (AuthType NONE)
+    Value: !GetAtt BasicLambdaUrl.FunctionUrl
