@@ -4,9 +4,14 @@ using Amazon.Lambda.Core;
 
 public class Function
 {
-  public string FunctionHandler(string input, ILambdaContext context)
+  public string FunctionHandler(Input input, ILambdaContext context)
   {
-        context.Logger.LogLine($"Input: {input}");
-        return $"Hello {input}";
-   }
+        context.Logger.LogLine($"Name: {input.Name}");
+        return $"Hello {input.Name}";
+  }
+
+    public class Input
+    {
+        public string Name { get; set; } = "";
+    }
 }

@@ -31,9 +31,10 @@ Resources:
   BasicLambda:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: MinimalApiFunc
+      FunctionName: BasicLambda
       Runtime: dotnet10
-      Handler: BasicLambda::Function::FunctionHandler 
+      #Handler: BasicLambda::Function::FunctionHandler 
+      Handler: BasicLambda::BasicLambda.Function::FunctionHandler
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
         S3Bucket: !Ref S3Bucket
