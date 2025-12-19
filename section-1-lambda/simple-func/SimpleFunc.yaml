@@ -9,13 +9,13 @@ Parameters:
   S3Key:
     Type: String
     Description: S3 key (path) to the deployment package zip
-    Default: v0.0.1/basic-lambda.zip
+    Default: v0.0.1/simple-func.zip
 
 Resources:
   LambdaExecutionRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: BasicLambdaRole
+      RoleName: SimpleFuncRole
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -28,34 +28,15 @@ Resources:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
 
-  BasicLambda:
+  SimpleFunc:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: BasicLambda
-      Runtime: dotnet10
-      Handler: BasicLambda::BasicLambda.Function::FunctionHandler
+      FunctionName: SimpleFunc
+      Runtime: dotnet8
+      Handler: SimpleFunc::SimpleFunc.Function::FunctionHandler
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
         S3Bucket: !Ref S3Bucket
         S3Key: !Ref S3Key
       MemorySize: 512
       Timeout: 15
-
-  BasicLambdaUrl:
-    Type: AWS::Lambda::Url
-    Properties:
-      TargetFunctionArn: !GetAtt BasicLambda.Arn
-      AuthType: NONE
-
-  BasicLambdaUrlPublicPermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      FunctionName: !Ref BasicLambda
-      Action: lambda:InvokeFunctionUrl
-      Principal: "*"
-      FunctionUrlAuthType: NONE
-
-Outputs:
-  FunctionUrl:
-    Description: Public Lambda Function URL (AuthType NONE)
-    Value: !GetAtt BasicLambdaUrl.FunctionUrl

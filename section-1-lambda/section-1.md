@@ -1,6 +1,6 @@
 # Section 1: Lambda
 ### Setup
-Install Lambda Templates
+Install Lambda Templates Package
 ```bash
 $ dotnet new install Amazon.Lambda.Templates
 ```
