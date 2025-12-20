@@ -1,0 +1,33 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: Create an ECR Repository
+
+Resources:
+  ContainerRepository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: dotnet-webapp
+      # ImageScanningConfiguration:
+      #  ScanOnPush: false # Cloudformation throws error for this property value seeing false as string instead of boolean
+      ImageTagMutability: MUTABLE # IMMUTABLE
+      # EmptyOnDelete: true # Cloudformation throws error for this property value seeing true as string instead of boolean
+      LifecyclePolicy:
+        LifecyclePolicyText:
+          Version: 2012-10-17
+          Rules:
+            - RuleNumber: 1
+              Description: Keep last 3 images
+              Selection:
+                TagStatus: any
+                CountType: imageCountMoreThan
+                CountNumber: 3
+              Action:
+                Type: expire
+
+Outputs:
+  RepositoryUri:
+    Description: ECR Repository URI
+    Value: !GetAtt ContainerRepository.RepositoryUri
+  RepositoryName:
+    Description: ECR Repository Name
+    Value: !Ref ContainerRepository
