@@ -1,4 +1,4 @@
-# Basic LambdaEventSource
+# Basic Lambda
 
 ### Description
 This creates a Basic Lambda handler code using Dotnet Class Library Project.  
@@ -40,7 +40,7 @@ The `<OutputType>Exe</OutputType>` directive makes the Lib a runnable code.
 $ cd BasicLambda
 $ dotnet publish -c Release -r linux-x64  --self-contained false -o publish
 ```
-After publishing you will find the `<ProjectName>.runtimeconfig.json` file in the `publish` folder. 
+After publishing you will find the `<ProjectName>.runtimeconfig.json` file in the `publish` folder.
 
 8. Package the code and send to S3
 ```bash

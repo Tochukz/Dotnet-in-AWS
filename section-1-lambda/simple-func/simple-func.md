@@ -1,4 +1,4 @@
-# Simple Lambda
+# Simple Func
 
 ### Description
 The example uses the _Lambda EmptyProject_ template from the `Amazon.Lambda.Templates` collection to build a Dotnet Core Lambda handler.  
