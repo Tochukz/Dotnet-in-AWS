@@ -34,9 +34,19 @@ $ dotnet run
 ```bash
 $ ContainerAppSln/ContainerApp
 $ docker build -t dotnet-webapp .
+# Run the docker container
+$  docker run -p 9000:8000 dotnet-webapp
 ```
+Go the http://localhost:9000 to test the running docker container.  
 
 3. Push the docker image to ECR
+```bash
+# Login Docker Client to  ECR
+$ aws ecr get-login-password | docker login --username AWS --password-stdin <account-id>.dkr.ecr.eu-west-2.amazonaws.com
+# Tag the image
+$ docker tag dotnet-webapp:latest <account-id>.dkr.ecr.eu-west-2.amazonaws.com/dotnet-webapp:latest
+# Push image to ECR repository
+$ docker push <account-id>.dkr.ecr.eu-west-2.amazonaws.com/dotnet-webapp:latest
 ```
-$ aws ecr get-login
-```
+
+__Deployment__  
