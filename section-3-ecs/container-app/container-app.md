@@ -50,3 +50,29 @@ $ docker push <account-id>.dkr.ecr.eu-west-2.amazonaws.com/dotnet-webapp:latest
 ```
 
 __Deployment__  
+Lint the template
+```bash
+$ cfn-lint WebAppContainer.yaml
+```
+
+Deploy the stack
+```bash
+$ aws cloudformation deploy --template-file WebAppContainer.yaml --stack-name WebAppContainer --capabilities CAPABILITY_NAMED_IAM --parameter-overrides file://private-parameters.json
+```
+
+__After Deployment__  
+Get the `AlbDnsName` from the stack output
+```bash
+$ aws cloudformation describe-stacks --stack-name WebAppContainer --query "Stacks[0].Outputs" --no-cli-pager
+```
+
+__Testing__  
+Use the `AlbDnsName` to test the application over a web browser.  
+You should see the default Dotnet Core Web Application pages. 
+
+__Cleanup__  
+Delete the stacks
+```bash
+$ aws cloudformation delete-stack --stack-name WebAppContainer
+$ aws cloudformation delete-stqack --stack-name WebAppRepo
+```

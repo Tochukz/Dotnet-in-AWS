@@ -1,4 +1,6 @@
 .env
 .vscode
 *.zip
-output*
+output*.json
+private-*
+secret-*

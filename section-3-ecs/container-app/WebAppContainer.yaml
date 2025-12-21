@@ -3,14 +3,29 @@ AWSTemplateFormatVersion: 2010-09-09
 Description: ECS Service and Task Definition for Containerized Dotnet Core Web Application
 
 Parameters:
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: VPC Id
+  PublicSubnetIdA:
+    Type: AWS::EC2::Subnet::Id
+    Description: Subnet Id of public subnet in AZ A
+  PublicSubnetIdB:
+    Type: AWS::EC2::Subnet::Id
+    Description: Subnet Id of public subnet in AZ B
   ContainerImage:
     Type: String
     Description: Docker image URI
     Default: your-account-id.dkr.ecr.us-east-1.amazonaws.com/your-app:latest
   ContainerPort:
     Type: Number
-    Description: Container port
-    Default: 80
+    Description: Port exposed by the container for the application runningin the container
+    Default: 8000
+  ContainerName:
+    Type: String
+    Description: Name of the container in the task definition
+    Default: DotnetWebappContainer
+    AllowedValues:
+      - DotnetWebappContainer
 
 Resources:
   EcsCluster:
@@ -33,7 +48,7 @@ Resources:
           - Effect: Allow
             Principal:
               Service: ecs-tasks.amazonaws.com
-            Action: 'sts:AssumeRole'
+            Action: "sts:AssumeRole"
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
 
@@ -48,7 +63,7 @@ Resources:
       Memory: 512
       ExecutionRoleArn: !GetAtt TaskExecutionRole.Arn
       ContainerDefinitions:
-        - Name: DotnetWebappContainer
+        - Name: !Ref ContainerName
           Image: !Ref ContainerImage
           PortMappings:
             - ContainerPort: !Ref ContainerPort
@@ -85,9 +100,8 @@ Resources:
       SecurityGroupIngress:
         - Description: Allow HTTP access
           IpProtocol: tcp
-          FromPort: 80
-          ToPort: 80
-          # CidrIp: 0.0.0.0/0
+          FromPort: !Ref ContainerPort
+          ToPort: !Ref ContainerPort
           SourceSecurityGroupId: !Ref AlbSecurityGroup
 
   AppLoadBalancer:
@@ -107,7 +121,7 @@ Resources:
     Properties:
       Name: EcsTargetGroup
       VpcId: !Ref VpcId
-      Port: 80
+      Port: !Ref ContainerPort
       Protocol: HTTP
       TargetType: ip
       HealthCheckPath: /
@@ -120,24 +134,29 @@ Resources:
       Protocol: HTTP
       DefaultActions:
         - Type: forward
-          TargetGroupArn: !Ref AlbTargetGroup   
+          TargetGroupArn: !Ref AlbTargetGroup
 
   EcsService:
     Type: AWS::ECS::Service
+    DependsOn: AlbListener
     Properties:
       ServiceName: dotnet-core-service
       Cluster: !Ref EcsCluster
       TaskDefinition: !Ref TaskDefinition
       DesiredCount: 1
       LaunchType: FARGATE
+      LoadBalancers:
+        - ContainerName: !Ref ContainerName
+          ContainerPort: !Ref ContainerPort
+          TargetGroupArn: !Ref AlbTargetGroup
       NetworkConfiguration:
         AwsvpcConfiguration:
           AssignPublicIp: ENABLED
-          Subnets:
-            - subnet-12345678
           SecurityGroups:
-            - sg-12345678
-
+            - !GetAtt EcsSecurityGroup.GroupId
+          Subnets:
+            - !Ref PublicSubnetIdA
+            - !Ref PublicSubnetIdB
 
 Outputs:
   AlbDnsName:
